@@ -1,6 +1,8 @@
 #include "Log.h"
+#include "schema.h"
+#include "table.h"
 #include <iostream>
-#include<sstream>
+#include <sstream>
 #include <windows.h>
 #include <string>
 #include <sys/stat.h>
@@ -9,10 +11,11 @@
 #include <process.h>
 #include <fstream>//二进制
 
-
 #define BUFFERSIZE 1024
 #define TIMER 1000//定时
+
 using namespace std;
+
 const char* LogPath="D:\\sample.dat";
 const char* LogPath1="D:\\sample1.txt";
 //初始化
@@ -46,7 +49,7 @@ void Log::Timer(void *p) {
 }
 
 
-Log::get_buffer() {
+int Log::get_buffer() {
     //char *bufferdata_;
     bufferdata_= new char[BUFFERSIZE];
     end_ = bufferdata_;
@@ -56,7 +59,7 @@ Log::get_buffer() {
     return 0;
 }
 
-Log::write(char *command) {
+int Log::write(char *command) {
     int data_lenth;
     if((data_lenth = strlen(command)) != 0){
         write_in_buffer(command,data_lenth);
@@ -65,7 +68,7 @@ Log::write(char *command) {
     return 0;
 }
 
-Log::write_in_buffer(char *command, int data_lenth){
+int Log::write_in_buffer(char *command, int data_lenth){
 
     //use_lenth = reinterpret_cast<int>(end_) - reinterpret_cast<int>(start_) ;
     char endl_ = '\n';
@@ -93,7 +96,7 @@ Log::write_in_buffer(char *command, int data_lenth){
 
 }
 
-Log::write_in_disk() {
+void Log::write_in_disk() {
     //cout << "content: " << bufferdata_ << endl;
     std::ofstream ofs(LogPath, ofstream::binary|ofstream::app);
     ofs.write(bufferdata_,use_lenth);
@@ -105,7 +108,7 @@ Log::write_in_disk() {
 
 
 
-Log::flush_log() {
+void Log::flush_log() {
     if(use_lenth!=0){
         write_in_disk();
         checkpoint();
@@ -119,7 +122,7 @@ Log::flush_log() {
     }
 }
 
-Log::checkpoint() {
+void Log::checkpoint() {
     int pos;
     std::ifstream in(LogPath, ifstream::binary);
     //in.seekg (0, ifstream::beg);
@@ -138,14 +141,14 @@ Log::checkpoint() {
 
 }
 
-Log::get_time() {
+int Log::get_time() {
     SYSTEMTIME st;
     ::GetLocalTime(&st);
     sprintf(time, "%04d-%02d-%02d %02d:%02d:%02d.%d ", st.wYear, st.wMonth, st.wDay, st.wHour,st.wMinute, st.wSecond, st.wMilliseconds);
     return 0;
 }
 
-Log::recover(){
+void Log::recover(){
 /**判断是否成功打开 没有成功打开则pos = 0*/
     int pos;
     std::ifstream ifs(LogPath1,ifstream::out);

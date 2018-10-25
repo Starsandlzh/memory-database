@@ -61,11 +61,7 @@ void* Btree::searchAddr(Node* ptr,int key)
     int i =0;
     for(; i<ptr->keyCount(); i++)
     {
-        if(key == ptr->entry_[i].first)
-            return ptr;
-        else if(key > ptr->entry_[i].first)
-            continue;
-        else if(key < ptr->entry_[i].first)
+        if(key < ptr->entry_[i].first)
             break;
     }
 

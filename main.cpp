@@ -35,7 +35,7 @@ int main()
         else if(!head.compare("load"))
         {
 
-            string tableName = remain.substr(0,remain.find(' '));
+            string tableName = remain.substr(0,  remain.find(' '));
             string path = remain.substr(remain.find("path")+5,remain.find("sep")-remain.find("path")-6);
             string sep = remain.substr(remain.find("sep")+5,remain.length()-remain.find("sep")-6);
             m.loadTuple(tableName,path,sep);
